@@ -87,9 +87,36 @@ func processPacket(agentID string, agentPackage model.AgentPacket) {
 func handleSSHAlert(agentID string, event model.SSHLoginEvent) {
 	log.Printf("处理SSH登录事件: Agent=%s, 用户=%s, 来源IP=%s",
 		agentID, event.Username, event.SourceIP)
+
+	record := model.AlertRecord{
+		AgentID:  agentID,
+		Type:     "SSH_LOGIN",
+		Level:    "HIGH",
+		Message:  event.Message,
+		SourceIP: event.SourceIP,
+		Username: event.Username,
+		RawData:  event,
+	}
+
+	if err := record.Save(); err != nil {
+		log.Printf("保存SSH登录警报记录失败: %v", err)
+	}
 }
 
 func handleFileAlert(agentID string, event model.FileAlertEvent) {
 	log.Printf("处理文件警报事件: Agent=%s, 文件=%s, 操作=%s",
 		agentID, event.FilePath, event.Operation)
+
+	record := model.AlertRecord{
+		AgentID:  agentID,
+		Type:     "FILE_ALERT",
+		Level:    "MEDIUM",
+		Message: event.Operation,
+		FilePath: event.FilePath,
+		RawData:  event,
+	}
+
+	if err := record.Save(); err != nil {
+		log.Printf("保存文件警报记录失败: %v", err)
+	}
 }

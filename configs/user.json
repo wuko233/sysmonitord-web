@@ -1,0 +1,11 @@
+{
+    "file_integrity": {
+      "monitor_paths": [
+        "/var/www/html"
+      ]
+    },
+    "ssh_monitor": {
+      "alert_on_root_login": false
+    }
+  }
+  

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sysmonitor-web/config"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 var DB *sql.DB

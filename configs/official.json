@@ -1,0 +1,24 @@
+{
+    "file_integrity": {
+      "enabled": true,
+      "scan_interval": "1h",
+      "monitor_paths": [
+        "/etc/passwd",
+        "/etc/shadow",
+        "/etc/sudoers",
+        "/bin",
+        "/usr/bin"
+      ],
+      "ignore_paths": [],
+      "alert_on_modify": true,
+      "alert_on_create": true,
+      "alert_on_delete": true
+    },
+    "ssh_monitor": {
+      "enabled": true,
+      "alert_on_root_login": true,
+      "display_on_shell": true
+    },
+    "audit_server_url": ""
+  }
+  
