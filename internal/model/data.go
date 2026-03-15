@@ -6,20 +6,24 @@ import (
 
 type AgentPacket struct {
 	Type      string      `json:"type"`
-	Timestmap int64       `json:"timestamp"`
+	Timestamp int64       `json:"timestamp"`
 	Payload   interface{} `json:"payload"`
 }
 
-type SSHLoginEvent struct {
-	Timestmap time.Time `json:"timestamp"`
-	Hostname  string    `json:"hostname"`
-	Username  string    `json:"username"`
-	Method    string    `json:"method"`
-	SourceIP  string    `json:"source_ip"`
-	Port      string    `json:"port"`
-	Service   string    `json:"service"`
-	PID       string    `json:"pid"`
+type SSHAlertPayload struct {
+	Type      string    `json:"type"`
+	Level     string    `json:"level"`
 	Message   string    `json:"message"`
+	Timestamp time.Time `json:"timestamp"`
+	Data      struct {
+		Hostname string `json:"hostname"`
+		Username string `json:"username"`
+		Method   string `json:"method"`
+		SourceIP string `json:"source_ip"`
+		Port     int    `json:"port"`
+		Service  string `json:"service"`
+		PID      string `json:"pid"`
+	} `json:"data"`
 }
 
 type FileAlertEvent struct {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"sysmonitor-web/internal/model"
 
 	"github.com/gin-gonic/gin"
@@ -53,13 +54,13 @@ func HandleAgentConnect(c *gin.Context) {
 }
 
 func processPacket(agentID string, agentPackage model.AgentPacket) {
-	log.Printf("接受到来自Agent %s 的数据包: 类型=%s, 时间戳=%d", agentID, agentPackage.Type, agentPackage.Timestmap)
+	log.Printf("接受到来自Agent %s 的数据包: 类型=%s, 时间戳=%d", agentID, agentPackage.Type, agentPackage.Timestamp)
 
 	switch agentPackage.Type {
 
-	case "SSH_ROOT_LOGIN", "SSH_ALERT":
+	case "SSH_ROOT_LOGIN", "SSH_ALERT", "SSH_LOGIN":
 		bytes, _ := json.Marshal(agentPackage.Payload)
-		var event model.SSHLoginEvent
+		var event model.SSHAlertPayload
 
 		if err := json.Unmarshal(bytes, &event); err != nil {
 			log.Printf("解析SSH登录事件失败: %v", err)
@@ -68,7 +69,7 @@ func processPacket(agentID string, agentPackage model.AgentPacket) {
 
 		handleSSHAlert(agentID, event)
 
-	case "REALTIME_FILE_ALERT", "NON_WHITELISTED_FILE":
+	case "REALTIME_FILE_ALERT", "NON_WHITELISTED_FILE", "FILE_HASH_MISMATCH", "REALTIME_HASH_MISMATCH":
 		bytes, _ := json.Marshal(agentPackage.Payload)
 		var event model.FileAlertEvent
 
@@ -77,24 +78,28 @@ func processPacket(agentID string, agentPackage model.AgentPacket) {
 			return
 		}
 
+		if event.Operation == "" {
+			event.Operation = agentPackage.Type
+		}
+
 		handleFileAlert(agentID, event)
 
 	case "STATUS_UPDATE":
-
+		// TODO: 处理状态更新
 	}
 }
 
-func handleSSHAlert(agentID string, event model.SSHLoginEvent) {
+func handleSSHAlert(agentID string, event model.SSHAlertPayload) {
 	log.Printf("处理SSH登录事件: Agent=%s, 用户=%s, 来源IP=%s",
-		agentID, event.Username, event.SourceIP)
+		agentID, event.Data.Username, event.Data.SourceIP)
 
 	record := model.AlertRecord{
 		AgentID:  agentID,
-		Type:     "SSH_LOGIN",
-		Level:    "HIGH",
+		Type:     event.Type,
+		Level:    event.Level,
 		Message:  event.Message,
-		SourceIP: event.SourceIP,
-		Username: event.Username,
+		SourceIP: event.Data.SourceIP,
+		Username: event.Data.Username,
 		RawData:  event,
 	}
 
@@ -107,11 +112,16 @@ func handleFileAlert(agentID string, event model.FileAlertEvent) {
 	log.Printf("处理文件警报事件: Agent=%s, 文件=%s, 操作=%s",
 		agentID, event.FilePath, event.Operation)
 
+	level := "MEDIUM"
+	if strings.Contains(event.Operation, "HASH_MISMATCH") {
+		level = "HIGH"
+	}
+
 	record := model.AlertRecord{
 		AgentID:  agentID,
-		Type:     "FILE_ALERT",
-		Level:    "MEDIUM",
-		Message: event.Operation,
+		Type:     event.Operation,
+		Level:    level,
+		Message:  event.Operation,
 		FilePath: event.FilePath,
 		RawData:  event,
 	}
