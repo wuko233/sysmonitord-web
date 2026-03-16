@@ -14,14 +14,14 @@ type ServerConfig struct {
 }
 
 type Databaseconfig struct {
-	Type     string `mapstructure:"type"`
-	Path     string `mapstructure:"path"`
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DBName   string `mapstructure:"db_name"`
-	SSLMode  string `mapstructure:"ssl_mode"`
+	Type string `mapstructure:"type"`
+	Path string `mapstructure:"path"`
+	// Host     string `mapstructure:"host"`
+	// Port     int    `mapstructure:"port"`
+	// User     string `mapstructure:"user"`
+	// Password string `mapstructure:"password"`
+	// DBName   string `mapstructure:"db_name"`
+	// SSLMode  string `mapstructure:"ssl_mode"`
 }
 
 type Config struct {

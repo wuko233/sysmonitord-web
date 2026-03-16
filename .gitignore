@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 sysmonitord-web.code-workspace
 config.yaml
+data.db
+.vscode/settings.json

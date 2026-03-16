@@ -58,12 +58,12 @@ func processPacket(agentID string, agentPackage model.AgentPacket) {
 
 	switch agentPackage.Type {
 
-	case "SSH_ROOT_LOGIN", "SSH_ALERT", "SSH_LOGIN":
+	case "SSH_ALERT":
 		bytes, _ := json.Marshal(agentPackage.Payload)
 		var event model.SSHAlertPayload
 
 		if err := json.Unmarshal(bytes, &event); err != nil {
-			log.Printf("解析SSH登录事件失败: %v", err)
+			log.Printf("解析SSH事件失败: %v", err)
 			return
 		}
 

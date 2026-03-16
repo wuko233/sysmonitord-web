@@ -29,15 +29,8 @@ func (r *AlertRecord) Save() error {
 	`
 
 	_, err = database.DB.Exec(query,
-		r.AgentID,
-		r.Type,
-		r.Level,
-		r.Message,
-		r.SourceIP,
-		r.Username,
-		r.FilePath,
-		rawBytes,
-		time.Now(),
+		r.AgentID, r.Type, r.Level, r.Message,
+		r.SourceIP, r.Username, r.FilePath, rawBytes, time.Now(),
 	)
 	return err
 }

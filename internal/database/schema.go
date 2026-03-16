@@ -6,7 +6,7 @@ func InitSchema() error {
 
 	createTableSQL := `
 		CREATE TABLE IF NOT EXISTS alerts (
-			id SERIAL PRIMARY KEY,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			agent_id VARCHAR(64) NOT NULL,
 			alert_type VARCHAR(50) NOT NULL,
 			level VARCHAR(20),
@@ -14,8 +14,8 @@ func InitSchema() error {
 			source_ip VARCHAR(64),
 			username VARCHAR(64),
 			file_path TEXT,
-			raw_data JSONB,
-			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			raw_data TEXT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 
 		-- 创建索引
